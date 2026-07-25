@@ -1,0 +1,474 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>VERAX — منصّة تداول الكريبتو بالذكاء الاصطناعي</title>
+<meta name="description" content="VERAX: منصّة تداول كريبتو بالذكاء الاصطناعي. تحليل متعدد الأطر الزمنية، استراتيجيات مُختبَرة، ومحرك اختبار بمستوى المؤسسات — بتحكّم كامل." />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#080B12; --bg2:#0B1018; --card:#111726; --card2:#0E1320;
+    --line:#1E2740; --line2:#2A3552;
+    --text:#EAECF3; --muted:#98A2B8; --dim:#66788400;
+    --brand:#8B7DF9; --brand-d:#5A46E6; --brand-dd:#241D52;
+    --gold:#34E0E6; --danger:#E5595E;
+    --radius:18px; --maxw:1140px;
+    --shadow:0 20px 60px -25px rgba(0,0,0,.8);
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{
+    background:var(--bg); color:var(--text);
+    font-family:'IBM Plex Sans Arabic',system-ui,-apple-system,sans-serif;
+    line-height:1.7; -webkit-font-smoothing:antialiased;
+    overflow-x:hidden;
+  }
+  .mono{font-family:'IBM Plex Mono',monospace; direction:ltr; unicode-bidi:isolate;}
+  .logo-name{font-family:'Space Grotesk',sans-serif;font-weight:700;letter-spacing:2px;direction:ltr;unicode-bidi:isolate}
+  a{color:inherit;text-decoration:none}
+  .wrap{max-width:var(--maxw);margin:0 auto;padding:0 22px}
+  .accent{color:var(--brand)}
+  .gold{color:var(--gold)}
+
+  /* ---------- background glow ---------- */
+  .bgfx{position:fixed;inset:0;z-index:-1;pointer-events:none;overflow:hidden}
+  .bgfx::before{content:"";position:absolute;top:-15%;right:-10%;width:60vw;height:60vw;
+    background:radial-gradient(circle, rgba(110,92,246,.20), transparent 62%);filter:blur(20px)}
+  .bgfx::after{content:"";position:absolute;bottom:-25%;left:-15%;width:55vw;height:55vw;
+    background:radial-gradient(circle, rgba(52,224,230,.10), transparent 60%);filter:blur(20px)}
+  .grid-lines{position:fixed;inset:0;z-index:-1;opacity:.25;pointer-events:none;
+    background-image:linear-gradient(var(--line) 1px,transparent 1px),linear-gradient(90deg,var(--line) 1px,transparent 1px);
+    background-size:64px 64px;mask-image:radial-gradient(ellipse 80% 60% at 50% 0%,#000 20%,transparent 75%)}
+
+  /* ---------- nav ---------- */
+  nav{position:sticky;top:0;z-index:50;backdrop-filter:blur(14px);
+    background:rgba(8,11,15,.72);border-bottom:1px solid var(--line)}
+  nav .wrap{display:flex;align-items:center;justify-content:space-between;height:66px}
+  .brand{display:flex;align-items:center;gap:10px;font-weight:800}
+  .navlinks{display:flex;gap:26px;align-items:center}
+  .navlinks a{color:var(--muted);font-weight:500;font-size:.96rem;transition:color .2s}
+  .navlinks a:hover{color:var(--text)}
+  .btn{display:inline-flex;align-items:center;gap:8px;justify-content:center;
+    font-family:inherit;font-weight:700;font-size:.98rem;cursor:pointer;
+    padding:12px 22px;border-radius:12px;border:1px solid transparent;transition:.2s;white-space:nowrap}
+  .btn-primary{background:linear-gradient(180deg,var(--brand),var(--brand-d));color:#FFFFFF;
+    box-shadow:0 10px 26px -10px rgba(110,92,246,.6)}
+  .btn-primary:hover{transform:translateY(-2px);box-shadow:0 16px 34px -12px rgba(110,92,246,.7)}
+  .btn-ghost{background:transparent;border-color:var(--line2);color:var(--text)}
+  .btn-ghost:hover{border-color:var(--brand);color:var(--brand)}
+  .btn.lg{padding:15px 30px;font-size:1.06rem}
+  @media(max-width:820px){.navlinks{display:none}}
+
+  /* ---------- hero ---------- */
+  header{padding:82px 0 44px;position:relative}
+  .eyebrow{display:inline-flex;align-items:center;gap:9px;color:var(--brand);
+    background:rgba(110,92,246,.08);border:1px solid rgba(110,92,246,.25);
+    padding:7px 15px;border-radius:100px;font-weight:700;font-size:.86rem;margin-bottom:26px}
+  h1{font-size:clamp(2.1rem,5.4vw,3.9rem);font-weight:900;line-height:1.16;letter-spacing:-.5px}
+  .lead{color:var(--muted);font-size:clamp(1.05rem,2.3vw,1.28rem);max-width:700px;margin:22px 0 6px}
+  .hero-cta{display:flex;gap:14px;flex-wrap:wrap;margin-top:32px}
+  .chips{display:flex;gap:10px;flex-wrap:wrap;margin-top:30px}
+  .chip{display:inline-flex;align-items:center;gap:8px;background:var(--card);border:1px solid var(--line);
+    padding:9px 15px;border-radius:11px;color:var(--muted);font-size:.9rem;font-weight:500}
+  .chip b{color:var(--text)}
+
+  section{padding:64px 0;position:relative}
+  .sec-head{text-align:center;max-width:660px;margin:0 auto 46px}
+  .sec-head .kick{color:var(--brand);font-weight:700;letter-spacing:.5px;font-size:.9rem}
+  h2{font-size:clamp(1.7rem,3.6vw,2.5rem);font-weight:800;margin-top:8px;letter-spacing:-.4px}
+  .sec-head p{color:var(--muted);margin-top:14px;font-size:1.06rem}
+
+  /* ---------- features ---------- */
+  .fgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+  @media(max-width:860px){.fgrid{grid-template-columns:1fr 1fr}}
+  @media(max-width:560px){.fgrid{grid-template-columns:1fr}}
+  .feat{background:var(--card2);border:1px solid var(--line);border-radius:var(--radius);padding:26px;transition:.2s}
+  .feat:hover{border-color:var(--brand-d);transform:translateY(-3px)}
+  .feat .ic{width:46px;height:46px;border-radius:12px;background:rgba(110,92,246,.12);
+    display:grid;place-items:center;margin-bottom:16px;font-size:1.35rem}
+  .feat h3{font-size:1.14rem;margin-bottom:8px}
+  .feat p{color:var(--muted);font-size:.97rem}
+
+  /* ---------- platform mock ---------- */
+  .platform{background:linear-gradient(180deg,var(--bg2),var(--bg))}
+  .plat-grid{display:grid;grid-template-columns:1.4fr 1fr;gap:30px;align-items:center}
+  @media(max-width:860px){.plat-grid{grid-template-columns:1fr}}
+  .mockwrap{border:1px solid var(--line2);border-radius:18px;overflow:hidden;
+    background:linear-gradient(160deg,var(--card),var(--card2));box-shadow:var(--shadow)}
+  .mock-top{display:flex;align-items:center;gap:8px;padding:13px 16px;border-bottom:1px solid var(--line)}
+  .mock-top .d{width:10px;height:10px;border-radius:50%}
+  .mock-top .t{margin-inline-start:auto;color:var(--muted);font-size:.8rem}
+  .mock-body{padding:18px;display:grid;grid-template-columns:1.55fr 1fr;gap:14px}
+  @media(max-width:560px){.mock-body{grid-template-columns:1fr}}
+  .mock-chart{border:1px solid var(--line);border-radius:12px;background:var(--bg);padding:6px}
+  .sig-row{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:11px 12px;
+    border:1px solid var(--line);border-radius:10px;margin-bottom:9px;background:var(--bg)}
+  .sig-row:last-child{margin-bottom:0}
+  .sig-row .lbl{font-size:.86rem;color:var(--muted)}
+  .sig-row .pill{font-size:.72rem;font-weight:700;padding:3px 10px;border-radius:100px;font-family:'IBM Plex Mono'}
+  .pill-up{background:rgba(52,224,230,.14);color:#34E0E6}
+  .pill-hold{background:rgba(152,162,184,.14);color:#98A2B8}
+  .pill-ind{background:rgba(110,92,246,.16);color:#8B7DF9}
+  .stats{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+  .stat{background:var(--card2);border:1px solid var(--line);border-radius:14px;padding:18px}
+  .stat .n{font-size:1.7rem;font-weight:800;color:var(--text);font-family:'IBM Plex Mono',monospace}
+  .stat .l{color:var(--muted);font-size:.9rem;margin-top:4px}
+  .stat .n .accent{color:var(--brand)}
+
+  /* ---------- pricing ---------- */
+  .pricing{background:linear-gradient(180deg,var(--bg),var(--bg2))}
+  .pgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;align-items:stretch}
+  @media(max-width:960px){.pgrid{grid-template-columns:1fr 1fr}}
+  @media(max-width:520px){.pgrid{grid-template-columns:1fr}}
+  .plan{background:var(--card2);border:1px solid var(--line);border-radius:var(--radius);
+    padding:26px 22px;display:flex;flex-direction:column;position:relative}
+  .plan.pop{border-color:var(--brand);background:linear-gradient(180deg,rgba(110,92,246,.07),var(--card2));
+    box-shadow:0 24px 60px -30px rgba(110,92,246,.5)}
+  .plan .tag{position:absolute;top:-12px;inset-inline-start:22px;background:var(--brand);color:#FFFFFF;
+    font-weight:800;font-size:.76rem;padding:4px 12px;border-radius:100px}
+  .plan .name{font-weight:700;color:var(--muted);font-size:1rem}
+  .plan .price{font-size:2.1rem;font-weight:900;margin:10px 0 2px;font-family:'IBM Plex Mono',monospace}
+  .plan .price small{font-size:.95rem;color:var(--muted);font-weight:500;font-family:'IBM Plex Sans Arabic'}
+  .plan .sub{color:var(--muted);font-size:.9rem;min-height:38px}
+  .plan ul{list-style:none;margin:18px 0;display:flex;flex-direction:column;gap:10px;flex:1}
+  .plan li{display:flex;gap:9px;font-size:.94rem;color:var(--text)}
+  .plan li::before{content:"✓";color:var(--brand);font-weight:800}
+  .plan .btn{width:100%}
+
+  /* ---------- partners ---------- */
+  .aff-card{border:1px solid var(--line2);border-radius:22px;overflow:hidden;
+    background:linear-gradient(120deg,var(--card),var(--card2))}
+  .aff-top{padding:34px;display:grid;grid-template-columns:1fr 1fr;gap:30px;align-items:center}
+  @media(max-width:820px){.aff-top{grid-template-columns:1fr}}
+  .steps{display:flex;flex-direction:column;gap:15px;margin-top:8px}
+  .step{display:flex;gap:13px;align-items:flex-start}
+  .step .num{flex-shrink:0;width:30px;height:30px;border-radius:9px;background:var(--brand-dd);color:var(--brand);
+    display:grid;place-items:center;font-weight:800;font-family:'IBM Plex Mono',monospace}
+  .step p{color:var(--muted);font-size:.98rem}
+  .step b{color:var(--text)}
+  .calc{background:var(--card2);border:1px solid var(--line);border-radius:16px;padding:24px}
+  .calc label{color:var(--muted);font-size:.92rem;display:flex;justify-content:space-between;margin-bottom:12px}
+  .calc input[type=range]{width:100%;accent-color:var(--brand);height:6px}
+  .calc .out{margin-top:20px;text-align:center;border-top:1px dashed var(--line2);padding-top:18px}
+  .calc .out .big{font-size:2.4rem;font-weight:900;color:var(--brand);font-family:'IBM Plex Mono',monospace}
+  .calc .out small{color:var(--muted);display:block;margin-top:4px}
+
+  /* ---------- faq ---------- */
+  .faq{max-width:820px;margin:0 auto;display:flex;flex-direction:column;gap:12px}
+  .qa{border:1px solid var(--line);border-radius:14px;background:var(--card2);overflow:hidden}
+  .qa button{width:100%;text-align:start;background:none;border:none;color:var(--text);
+    font-family:inherit;font-size:1.05rem;font-weight:700;padding:20px 22px;cursor:pointer;
+    display:flex;justify-content:space-between;align-items:center;gap:12px}
+  .qa .plus{color:var(--brand);font-size:1.4rem;transition:transform .25s;flex-shrink:0}
+  .qa .ans{max-height:0;overflow:hidden;transition:max-height .3s ease;color:var(--muted)}
+  .qa .ans p{padding:0 22px 20px;font-size:.98rem}
+  .qa.open .plus{transform:rotate(45deg)}
+
+  /* ---------- final cta ---------- */
+  .final{text-align:center;background:radial-gradient(ellipse 70% 100% at 50% 0%,rgba(110,92,246,.1),transparent 70%)}
+  .final h2{max-width:720px;margin-inline:auto}
+  .final .lead{margin-inline:auto;margin-top:16px}
+
+  /* ---------- footer ---------- */
+  footer{border-top:1px solid var(--line);padding:44px 0 34px;background:var(--bg2)}
+  .foot-top{display:flex;justify-content:space-between;gap:20px;flex-wrap:wrap;align-items:center;margin-bottom:22px}
+  .disclaimer{color:#7c8b95;font-size:.82rem;line-height:1.7}
+  .foot-bottom{color:var(--muted);font-size:.86rem;margin-top:18px;display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px;border-top:1px solid var(--line);padding-top:18px}
+
+  .reveal{opacity:0;transform:translateY(18px);animation:rise .7s ease forwards}
+  @keyframes rise{to{opacity:1;transform:none}}
+</style>
+</head>
+<body>
+<div class="bgfx"></div>
+<div class="grid-lines"></div>
+
+<!-- NAV -->
+<nav>
+  <div class="wrap">
+    <a class="brand" href="#" style="text-decoration:none">
+      <svg width="26" height="26" viewBox="0 0 48 48" fill="none" aria-label="Verax">
+        <defs><linearGradient id="vNav" x1="6" y1="40" x2="42" y2="8" gradientUnits="userSpaceOnUse"><stop stop-color="#8B7DF9"/><stop offset="1" stop-color="#34E0E6"/></linearGradient></defs>
+        <path d="M7 24.5 L19.5 37 L40.5 10.5" stroke="url(#vNav)" stroke-width="6.4" stroke-linecap="round" stroke-linejoin="round"/>
+        <circle cx="40.5" cy="10.5" r="4.2" fill="#34E0E6"/>
+      </svg>
+      <span class="logo-name" style="font-size:1.35rem">VERAX</span>
+    </a>
+    <div class="navlinks">
+      <a href="#features">المميزات</a>
+      <a href="#platform">المنصّة</a>
+      <a href="#pricing">الأسعار</a>
+      <a href="#partners">الشركاء</a>
+      <a href="#faq">الأسئلة</a>
+      <a class="btn btn-primary" href="#pricing">ابدأ الآن</a>
+    </div>
+  </div>
+</nav>
+
+<!-- HERO -->
+<header>
+  <div class="wrap">
+    <div class="eyebrow reveal">● منصّة تداول الكريبتو بالذكاء الاصطناعي</div>
+    <h1 class="reveal" style="animation-delay:.05s">
+      تداول الكريبتو بذكاء <span class="accent">المؤسسات</span>،<br>لا بعشوائية السوق.
+    </h1>
+    <p class="lead reveal" style="animation-delay:.12s">
+      VERAX منصّة تحلّل السوق عبر أطر زمنية متعددة، وتولّد إشارات مبنية على استراتيجيات مُختبَرة،
+      وتمنحك تحكّماً كاملاً — مع محرك اختبار يثبت أداء استراتيجيتك على البيانات التاريخية قبل أن تخاطر برأس مالك.
+    </p>
+    <div class="hero-cta reveal" style="animation-delay:.18s">
+      <a class="btn btn-primary lg" href="#pricing">ابدأ مع VERAX — <span dir="ltr">$199</span></a>
+      <a class="btn btn-ghost lg" href="#platform">شاهد المنصّة ↓</a>
+    </div>
+    <div class="chips reveal" style="animation-delay:.24s">
+      <span class="chip">تحليل متعدد الأطر الزمنية</span>
+      <span class="chip">استراتيجيات قابلة للتخصيص</span>
+      <span class="chip">محرك اختبار مؤسسي</span>
+      <span class="chip">تحكّم كامل بلا صندوق أسود</span>
+    </div>
+  </div>
+</header>
+
+<!-- WHY / BENEFITS -->
+<section id="features">
+  <div class="wrap">
+    <div class="sec-head">
+      <div class="kick">لماذا VERAX</div>
+      <h2>ذكاء اصطناعي في خدمة قراراتك</h2>
+      <p>منصّة كاملة تجمع قوة التحليل الآلي مع تحكّمٍ لا يمنحك إياه أي بوت جاهز.</p>
+    </div>
+    <div class="fgrid">
+      <div class="feat"><div class="ic">📊</div><h3>تحليل متعدد الأطر</h3><p>يقرأ الاتجاه والزخم والتقلّب عبر 30m و1h و4h و1d في آنٍ واحد، لإشارات أكثر ثباتاً.</p></div>
+      <div class="feat"><div class="ic">🧪</div><h3>استراتيجيات مُختبَرة</h3><p>كل استراتيجية تُختبَر على سنوات من البيانات بنمذجة تكاليف واقعية قبل أن تُشغَّل بأموال حقيقية.</p></div>
+      <div class="feat"><div class="ic">🎛️</div><h3>تحكّم كامل</h3><p>كودك، مفاتيحك، استراتيجيتك. خصّص كل شيء وأضِف منطقك الخاص — بلا قيود ولا صندوق أسود.</p></div>
+      <div class="feat"><div class="ic">🕸️</div><h3>معمارية معيارية</h3><p>مبنية على LangGraph: عُقد منفصلة للبيانات والإشارات والمخاطر والقرار، سهلة التوسعة.</p></div>
+      <div class="feat"><div class="ic">🔓</div><h3>جاهزة خلال دقائق</h3><p>تعمل فوراً بالإعداد الافتراضي — بدون الحاجة لأي مفاتيح API لتبدأ التجربة.</p></div>
+      <div class="feat"><div class="ic">🧠</div><h3>طبقة ذكاء اختيارية</h3><p>محرّك قرار سريع افتراضياً، مع إمكانية تفعيل طبقة النماذج اللغوية (LLM) بضغطة إعداد.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- PLATFORM -->
+<section class="platform" id="platform">
+  <div class="wrap">
+    <div class="sec-head">
+      <div class="kick">المنصّة</div>
+      <h2>محرك اختبار بمستوى المؤسسات</h2>
+      <p>اختبر استراتيجيتك على سنوات من البيانات، بنمذجة عمولات وانزلاق واقعية، ونتائج قابلة لإعادة الإنتاج بالكامل.</p>
+    </div>
+    <div class="plat-grid">
+      <div class="mockwrap">
+        <div class="mock-top">
+          <span class="d" style="background:#E5595E"></span><span class="d" style="background:#E6B14C"></span><span class="d" style="background:#34E0E6"></span>
+          <span class="t mono">VERAX Console · BTC/USDT</span>
+        </div>
+        <div class="mock-body">
+          <div class="mock-chart">
+            <svg viewBox="0 0 520 200" width="100%" height="170" preserveAspectRatio="none">
+              <defs>
+                <linearGradient id="area" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0" stop-color="#6E5CF6" stop-opacity=".38"/>
+                  <stop offset="1" stop-color="#6E5CF6" stop-opacity="0"/>
+                </linearGradient>
+                <linearGradient id="ln" x1="0" y1="1" x2="1" y2="0">
+                  <stop offset="0" stop-color="#6E5CF6"/><stop offset="1" stop-color="#34E0E6"/>
+                </linearGradient>
+              </defs>
+              <line x1="0" y1="50" x2="520" y2="50" stroke="#1E2740" stroke-width="1"/>
+              <line x1="0" y1="100" x2="520" y2="100" stroke="#1E2740" stroke-width="1"/>
+              <line x1="0" y1="150" x2="520" y2="150" stroke="#1E2740" stroke-width="1"/>
+              <path d="M0,150 L60,135 L110,155 L160,120 L210,138 L260,100 L310,120 L360,78 L410,95 L460,60 L520,80 L520,200 L0,200 Z" fill="url(#area)"/>
+              <path d="M0,150 L60,135 L110,155 L160,120 L210,138 L260,100 L310,120 L360,78 L410,95 L460,60 L520,80" fill="none" stroke="url(#ln)" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/>
+              <circle cx="260" cy="100" r="4" fill="#34E0E6"/><circle cx="360" cy="78" r="4" fill="#34E0E6"/><circle cx="460" cy="60" r="4.5" fill="#34E0E6"/>
+            </svg>
+          </div>
+          <div>
+            <div class="sig-row"><span class="lbl">الاتجاه · 4h</span><span class="pill pill-up">BUY</span></div>
+            <div class="sig-row"><span class="lbl">الزخم · 1h</span><span class="pill pill-ind">SIGNAL</span></div>
+            <div class="sig-row"><span class="lbl">المخاطر</span><span class="pill pill-hold">20% CAP</span></div>
+            <div class="sig-row"><span class="lbl">التقلّب</span><span class="pill pill-hold">NORMAL</span></div>
+          </div>
+        </div>
+      </div>
+      <div class="stats">
+        <div class="stat"><div class="n"><span class="accent">4×</span></div><div class="l">أطر زمنية تُحلَّل في آنٍ واحد</div></div>
+        <div class="stat"><div class="n">100<span class="accent">%</span></div><div class="l">نتائج قابلة لإعادة الإنتاج</div></div>
+        <div class="stat"><div class="n">real</div><div class="l">نمذجة عمولات وانزلاق واقعية</div></div>
+        <div class="stat"><div class="n"><span class="accent">∞</span></div><div class="l">قابلية تخصيص الاستراتيجيات</div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PRICING -->
+<section class="pricing" id="pricing">
+  <div class="wrap">
+    <div class="sec-head">
+      <div class="kick">الأسعار</div>
+      <h2>ابدأ مجاناً، وكبّر وقت ما تجهز</h2>
+      <p>دفعة واحدة للقالب — بلا اشتراكات مخفية. كل الأسعار بالدولار الأمريكي.</p>
+    </div>
+    <div class="pgrid">
+      <div class="plan">
+        <div class="name">Starter</div>
+        <div class="price">$0 <small>مجاناً</small></div>
+        <div class="sub">جرّب المنصّة قبل ما تدفع.</div>
+        <ul>
+          <li>المحرك الأساسي</li>
+          <li>اختبار على بيانات تجريبية</li>
+          <li>وثائق البداية</li>
+        </ul>
+        <a class="btn btn-ghost" href="#">ابدأ مجاناً</a>
+      </div>
+      <div class="plan pop">
+        <span class="tag">الأكثر طلباً</span>
+        <div class="name">Pro — المنصّة الكاملة</div>
+        <div class="price">$199 <small>/ مرة واحدة</small></div>
+        <div class="sub">كل ما تحتاجه لتتداول بذكاء.</div>
+        <ul>
+          <li>المحرك الكامل + كل المميزات</li>
+          <li>تحليل متعدد الأطر والعملات</li>
+          <li>محرك اختبار مؤسسي</li>
+          <li>توثيق كامل + تحديثات</li>
+        </ul>
+        <a class="btn btn-primary" href="#">احصل على Pro</a>
+      </div>
+      <div class="plan">
+        <div class="name">إعداد موجّه</div>
+        <div class="price">$890 <small>مرة واحدة</small></div>
+        <div class="sub">نجهّزها ونخصّصها لك.</div>
+        <ul>
+          <li>كل مزايا Pro</li>
+          <li>جلسة إعداد 60 دقيقة</li>
+          <li>تخصيص عملاتك وإعداداتك</li>
+          <li>دعم أسبوعين</li>
+        </ul>
+        <a class="btn btn-ghost" href="#">احجز الإعداد</a>
+      </div>
+      <div class="plan">
+        <div class="name">حلّ مخصّص</div>
+        <div class="price">من $2,900 <small></small></div>
+        <div class="sub">نبنيه لك من الصفر لحالتك.</div>
+        <ul>
+          <li>منصّة مبنية ومُسلّمة لك</li>
+          <li>استراتيجيتك واستهدافك</li>
+          <li>اختبارات وتوثيق مخصّص</li>
+          <li>دعم مخصّص</li>
+        </ul>
+        <a class="btn btn-ghost" href="#">تواصل معنا</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PARTNERS -->
+<section id="partners">
+  <div class="wrap">
+    <div class="sec-head">
+      <div class="kick">برنامج الشركاء</div>
+      <h2>اربح 25% مع كل عملية بيع</h2>
+      <p>روّج لمنصّة تؤمن بها، واحصل على عمولة مباشرة عن كل عميل تجلبه.</p>
+    </div>
+    <div class="aff-card">
+      <div class="aff-top">
+        <div>
+          <div class="steps">
+            <div class="step"><span class="num">1</span><p><b>سجّل</b> واحصل على رابط الشراكة الخاص بك.</p></div>
+            <div class="step"><span class="num">2</span><p><b>شارك</b> VERAX مع جمهورك ومجتمعك.</p></div>
+            <div class="step"><span class="num">3</span><p><b>اربح 25%</b> عن كل عملية شراء تتم عبر رابطك، مع تتبّع فوري ودفعات موثوقة.</p></div>
+          </div>
+        </div>
+        <div class="calc">
+          <label>كم عميل تجلب شهرياً؟ <b class="mono" id="cval" style="color:var(--brand)">10</b></label>
+          <input type="range" min="1" max="50" value="10" id="crange" />
+          <div class="out">
+            <div class="big"><span id="cmoney">498</span> <span style="font-size:1rem;color:var(--muted)">$ / شهر</span></div>
+            <small>مثال على باقة Pro (<span dir="ltr">$199</span> × 25%). العمولة تنطبق على كل الباقات.</small>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FAQ -->
+<section id="faq">
+  <div class="wrap">
+    <div class="sec-head"><div class="kick">الأسئلة الشائعة</div><h2>كل ما تريد معرفته</h2></div>
+    <div class="faq">
+      <div class="qa"><button>ما الذي أحصل عليه عند الشراء؟ <span class="plus">+</span></button>
+        <div class="ans"><p>منصّة VERAX كاملة: المحرك، الاستراتيجيات، محرك الاختبار، الوثائق الشاملة، والتحديثات المستقبلية — جاهزة للتشغيل والتخصيص.</p></div></div>
+      <div class="qa"><button>هل أحتاج خبرة برمجية أو مفاتيح API؟ <span class="plus">+</span></button>
+        <div class="ans"><p>لا لتبدأ — تعمل المنصّة فوراً بالإعداد الافتراضي بدون أي مفاتيح. وحين تجهز للتداول الحقيقي، الربط بمنصّتك بسيط وموثّق خطوة بخطوة.</p></div></div>
+      <div class="qa"><button>هل أقدر أخصّصها لاستراتيجيتي؟ <span class="plus">+</span></button>
+        <div class="ans"><p>نعم. المعمارية معيارية ومفتوحة — تضيف استراتيجيتك ومنطقك الخاص بسهولة، وتتحكّم في كل معطى: العملات، الأطر الزمنية، وحدود المخاطر.</p></div></div>
+      <div class="qa"><button>ما نوع الدعم المتاح؟ <span class="plus">+</span></button>
+        <div class="ans"><p>وثائق شاملة وتحديثات مستمرة لكل الباقات، ودعم مباشر مع باقتَي الإعداد والحلّ المخصّص.</p></div></div>
+      <div class="qa"><button>هل يوجد ضمان استرجاع؟ <span class="plus">+</span></button>
+        <div class="ans"><p>نعم — استرجاع كامل خلال 14 يوماً إذا لم تكن المنصّة مناسبة لك.</p></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- FINAL CTA -->
+<section class="final">
+  <div class="wrap">
+    <h2>ابدأ التداول بذكاء اليوم</h2>
+    <p class="lead">انضم إلى VERAX واحصل على منصّة تداول كريبتو كاملة وقابلة للتخصيص — بتحكّمٍ كامل.</p>
+    <div class="hero-cta" style="justify-content:center">
+      <a class="btn btn-primary lg" href="#pricing">ابدأ مع VERAX — <span dir="ltr">$199</span></a>
+      <a class="btn btn-ghost lg" href="#partners">كن شريكاً</a>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="wrap">
+    <div class="foot-top">
+      <div class="brand">
+        <svg width="24" height="24" viewBox="0 0 48 48" fill="none" aria-label="Verax">
+          <defs><linearGradient id="vFoot" x1="6" y1="40" x2="42" y2="8" gradientUnits="userSpaceOnUse"><stop stop-color="#8B7DF9"/><stop offset="1" stop-color="#34E0E6"/></linearGradient></defs>
+          <path d="M7 24.5 L19.5 37 L40.5 10.5" stroke="url(#vFoot)" stroke-width="6.4" stroke-linecap="round" stroke-linejoin="round"/>
+          <circle cx="40.5" cy="10.5" r="4.2" fill="#34E0E6"/>
+        </svg>
+        <span class="logo-name" style="font-size:1.2rem">VERAX</span>
+      </div>
+      <div class="mono" style="color:var(--muted);font-size:.9rem">AI-powered crypto trading platform</div>
+    </div>
+    <div class="disclaimer">
+      تنويه: التداول في الأصول الرقمية ينطوي على مخاطر. VERAX منصّة وأداة برمجية ولا تقدّم نصيحة مالية أو استثمارية.
+      الأداء التاريخي لا يضمن النتائج المستقبلية.
+    </div>
+    <div class="foot-bottom">
+      <span>© 2026 VERAX. جميع الحقوق محفوظة.</span>
+      <span class="mono">Proof over hype.</span>
+    </div>
+  </div>
+</footer>
+
+<script>
+  document.querySelectorAll('.qa button').forEach(function(b){
+    b.addEventListener('click', function(){
+      var qa = b.parentElement;
+      var ans = qa.querySelector('.ans');
+      var open = qa.classList.toggle('open');
+      ans.style.maxHeight = open ? ans.scrollHeight + 'px' : '0';
+    });
+  });
+  var r = document.getElementById('crange');
+  var cval = document.getElementById('cval');
+  var cmoney = document.getElementById('cmoney');
+  function fmt(n){ return n.toLocaleString('en-US'); }
+  function upd(){
+    var c = parseInt(r.value,10);
+    cval.textContent = c;
+    cmoney.textContent = fmt(Math.round(c * 199 * 0.25));
+  }
+  r.addEventListener('input', upd); upd();
+</script>
+</body>
+</html>
